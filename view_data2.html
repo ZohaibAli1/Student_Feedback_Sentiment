@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Analysis</title>
+    <!-- Include Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Feedback Analysis</h1>
+
+    <!-- Render plots for each table -->
+    {% for plot in plots %}
+    <div id="plot{{ loop.index }}">
+        {{ plot | safe }}
+    </div>
+    {% endfor %}
+
+    <script>
+        // Set custom layout for each plot
+        var layouts = [
+            {title: 'Mean Feedback Scores for Table A', xaxis: {title: 'Course ID'}, yaxis: {title: 'Mean Score'}},
+            {title: 'Mean Feedback Scores for Table B', xaxis: {title: 'Course ID'}, yaxis: {title: 'Mean Score'}},
+            {title: 'Mean Feedback Scores for Table C', xaxis: {title: 'Course ID'}, yaxis: {title: 'Mean Score'}},
+            {title: 'Mean Feedback Scores for Table D', xaxis: {title: 'Course ID'}, yaxis: {title: 'Mean Score'}},
+            {title: 'Mean Feedback Scores for Table E', xaxis: {title: 'Course ID'}, yaxis: {title: 'Mean Score'}}
+        ];
+
+        // Update the layout of each plot
+        var plotDivs = document.querySelectorAll('div[id^="plot"]');
+        plotDivs.forEach(function(div, index) {
+            Plotly.relayout(div, layouts[index]);
+        });
+
+        // Set colors for high values in each plot
+        var dataDivs = document.querySelectorAll('div.plotly');
+        dataDivs.forEach(function(div) {
+            var data = div.data;
+            data.forEach(function(trace) {
+                var maxVal = Math.max(...trace.y);
+                var colors = [];
+                trace.y.forEach(function(val) {
+                    if (val === maxVal) {
+                        colors.push('red'); // Set color for high value
+                    } else {
+                        colors.push('blue'); // Set default color
+                    }
+                });
+                trace.marker.color = colors;
+            });
+            Plotly.redraw(div);
+        });
+    </script>
+</body>
+</html>

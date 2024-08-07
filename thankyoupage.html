@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Thank You</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .thank-you {
+      text-align: center;
+    }
+
+    .thank-you h1 {
+      font-size: 4rem;
+      color: #333;
+      opacity: 0;
+      transform: translateY(-50px);
+      animation: fadeAndMove 1s ease forwards;
+    }
+
+    @keyframes fadeAndMove {
+      0% {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+  <link href="{{url_for('static',filename='css/style.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='vendor/icofont/icofont.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='vendor/boxicons/css/boxicons.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='vendor/venobox/venobox.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='vendor/owl.carousel/assets/owl.carousel.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static',filename='vendor/aos/aos.css')}}" rel="stylesheet">
+
+
+<body>
+  <div class="thank-you">
+    <h1>Thank You!</h1>
+    <a href="/" class="btn btn-primary mt-5">Back to Homepage</a>
+  </div>
+</body>
+
+</html>

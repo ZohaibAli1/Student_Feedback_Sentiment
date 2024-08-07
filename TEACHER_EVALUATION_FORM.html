@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rating Table</title>
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+</style>
+</head>
+<body>
+
+  <h1>Teacher Evaluation Form for Course {{ course_id }}</h1>
+
+  {% if teacher_details %}
+      <h2>Teacher Details</h2>
+      <p>Username: {{ teacher_details['username'] }}</p>
+      <p>Course Name: {{ teacher_details['course_name'] }}</p>
+  {% else %}
+      <p>Teacher details not found for the specified course.</p>
+  {% endif %}
+
+<form id="feedbackForm" action="/submit_teacher_evaluation/{{ course_id }}" method="post">
+
+<table>
+  <thead>
+    <tr>
+      <th>Subject</th>
+      <th>Rating (Below Avg.)</th>
+      <th>Rating (Avg.)</th>
+      <th>Rating (Good)</th>
+      <th>Rating (Very Good)</th>
+      <th>Rating (Excellent)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Punctuality in the Class</td>
+      <td><input type="radio" name="punctuality" value="1"></td>
+      <td><input type="radio" name="punctuality" value="2"></td>
+      <td><input type="radio" name="punctuality" value="3"></td>
+      <td><input type="radio" name="punctuality" value="4"></td>
+      <td><input type="radio" name="punctuality" value="5"></td>
+    </tr>
+    <tr>
+      <td>Regularity in taking Classes</td>
+      <td><input type="radio" name="regularity" value="1"></td>
+      <td><input type="radio" name="regularity" value="2"></td>
+      <td><input type="radio" name="regularity" value="3"></td>
+      <td><input type="radio" name="regularity" value="4"></td>
+      <td><input type="radio" name="regularity" value="5"></td>
+    </tr>
+    <tr>
+    </tr>
+    <tr>
+      <td>Students’ attendance/ presence in the class of teacher who is being evaluated</td>
+      <td><input type="radio" name="attendance" value="1"></td>
+      <td><input type="radio" name="attendance" value="2"></td>
+      <td><input type="radio" name="attendance" value="3"></td>
+      <td><input type="radio" name="attendance" value="4"></td>
+      <td><input type="radio" name="attendance" value="5"></td>
+    </tr>
+    <tr>
+      <td>Completes syllabus of the course in time</td>
+      <td><input type="radio" name="syllabus" value="1"></td>
+      <td><input type="radio" name="syllabus" value="2"></td>
+      <td><input type="radio" name="syllabus" value="3"></td>
+      <td><input type="radio" name="syllabus" value="4"></td>
+      <td><input type="radio" name="syllabus" value="5"></td>
+    </tr>
+    <tr>
+      <td>Scheduled organization of assignments, class test, quizzes and seminars</td>
+      <td><input type="radio" name="organization" value="1"></td>
+      <td><input type="radio" name="organization" value="2"></td>
+      <td><input type="radio" name="organization" value="3"></td>
+      <td><input type="radio" name="organization" value="4"></td>
+      <td><input type="radio" name="organization" value="5"></td>
+    </tr>
+    <tr>
+      <td>Makes alternate arrangement of class in his/her absence</td>
+      <td><input type="radio" name="arrangement" value="1"></td>
+      <td><input type="radio" name="arrangement" value="2"></td>
+      <td><input type="radio" name="arrangement" value="3"></td>
+      <td><input type="radio" name="arrangement" value="4"></td>
+      <td><input type="radio" name="arrangement" value="5"></td>
+    </tr>
+    <tr>
+      <td><b>Sub Total (A)</b></td>
+      <td colspan="5"><div id="subTotalA">-</div></td>
+    </tr>
+    <tr>
+      <td>Focus on Syllabi</td>
+      <td><input type="radio" name="focusSyllabi" value="1"></td>
+      <td><input type="radio" name="focusSyllabi" value="2"></td>
+      <td><input type="radio" name="focusSyllabi" value="3"></td>
+      <td><input type="radio" name="focusSyllabi" value="4"></td>
+      <td><input type="radio" name="focusSyllabi" value="5"></td>
+    </tr>
+    <tr>
+      <td>Self-confidence</td>
+      <td><input type="radio" name="selfConfidence" value="1"></td>
+      <td><input type="radio" name="selfConfidence" value="2"></td>
+      <td><input type="radio" name="selfConfidence" value="3"></td>
+      <td><input type="radio" name="selfConfidence" value="4"></td>
+      <td><input type="radio" name="selfConfidence" value="5"></td>
+    </tr>
+    <tr>
+      <td>Communication skills</td>
+      <td><input type="radio" name="communicationSkills" value="1"></td>
+      <td><input type="radio" name="communicationSkills" value="2"></td>
+      <td><input type="radio" name="communicationSkills" value="3"></td>
+      <td><input type="radio" name="communicationSkills" value="4"></td>
+      <td><input type="radio" name="communicationSkills" value="5"></td>
+    </tr>
+    <tr>
+      <td>Conducting the classroom discussions</td>
+      <td><input type="radio" name="classroomDiscussions" value="1"></td>
+      <td><input type="radio" name="classroomDiscussions" value="2"></td>
+      <td><input type="radio" name="classroomDiscussions" value="3"></td>
+      <td><input type="radio" name="classroomDiscussions" value="4"></td>
+      <td><input type="radio" name="classroomDiscussions" value="5"></td>
+    </tr>
+    <tr>
+      <td>Teaching the subject matter</td>
+      <td><input type="radio" name="teachingSubjectMatter" value="1"></td>
+      <td><input type="radio" name="teachingSubjectMatter" value="2"></td>
+      <td><input type="radio" name="teachingSubjectMatter" value="3"></td>
+      <td><input type="radio" name="teachingSubjectMatter" value="4"></td>
+      <td><input type="radio" name="teachingSubjectMatter" value="5"></td>
+    </tr>
+    <tr>
+      <td>Delivery of structured lecture</td>
+      <td><input type="radio" name="structuredLecture" value="1"></td>
+      <td><input type="radio" name="structuredLecture" value="2"></td>
+      <td><input type="radio" name="structuredLecture" value="3"></td>
+      <td><input type="radio" name="structuredLecture" value="4"></td>
+      <td><input type="radio" name="structuredLecture" value="5"></td>
+    </tr>
+    <tr>
+      <td>Skill of linking subject to life experience & creating interest in the subject</td>
+      <td><input type="radio" name="linkingSubject" value="1"></td>
+      <td><input type="radio" name="linkingSubject" value="2"></td>
+      <td><input type="radio" name="linkingSubject" value="3"></td>
+      <td><input type="radio" name="linkingSubject" value="4"></td>
+      <td><input type="radio" name="linkingSubject" value="5"></td>
+    </tr>
+    <tr>
+      <td>Refers to latest developments in the field</td>
+      <td><input type="radio" name="latestDevelopments" value="1"></td>
+      <td><input type="radio" name="latestDevelopments" value="2"></td>
+      <td><input type="radio" name="latestDevelopments" value="3"></td>
+      <td><input type="radio" name="latestDevelopments" value="4"></td>
+      <td><input type="radio" name="latestDevelopments" value="5"></td>
+    </tr>
+    <tr>
+      <td><b>Sub Total (B)</b></td>
+      <td colspan="5"><div id="subTotalB">-</div></td>
+    </tr>
+  <tr>
+  <td>Uses of teaching aids (OHP/Blackboard /PPT's)</td>
+  <td><input type="radio" name="teachingAids" value="1"></td>
+  <td><input type="radio" name="teachingAids" value="2"></td>
+  <td><input type="radio" name="teachingAids" value="3"></td>
+  <td><input type="radio" name="teachingAids" value="4"></td>
+  <td><input type="radio" name="teachingAids" value="5"></td>
+</tr>
+<tr>
+  <td>Blackboard/Whiteboard work in terms of legibility, visibility and structure</td>
+  <td><input type="radio" name="whiteboardWork" value="1"></td>
+  <td><input type="radio" name="whiteboardWork" value="2"></td>
+  <td><input type="radio" name="whiteboardWork" value="3"></td>
+  <td><input type="radio" name="whiteboardWork" value="4"></td>
+  <td><input type="radio" name="whiteboardWork" value="5"></td>
+</tr>
+<tr>
+  <td>Uses of innovative teaching methods</td>
+  <td><input type="radio" name="innovativeTeaching" value="1"></td>
+  <td><input type="radio" name="innovativeTeaching" value="2"></td>
+  <td><input type="radio" name="innovativeTeaching" value="3"></td>
+  <td><input type="radio" name="innovativeTeaching" value="4"></td>
+  <td><input type="radio" name="innovativeTeaching" value="5"></td>
+</tr>
+<tr>
+  <td>Shares the answers of class tests or sessional test questions after the conduct of the class tests/sessional tests</td>
+  <td><input type="radio" name="sharesAnswers" value="1"></td>
+  <td><input type="radio" name="sharesAnswers" value="2"></td>
+  <td><input type="radio" name="sharesAnswers" value="3"></td>
+  <td><input type="radio" name="sharesAnswers" value="4"></td>
+  <td><input type="radio" name="sharesAnswers" value="5"></td>
+</tr>
+<tr>
+  <td>Shows the evaluated answer books of class tests to the students</td>
+  <td><input type="radio" name="evaluatedAnswerBooks" value="1"></td>
+  <td><input type="radio" name="evaluatedAnswerBooks" value="2"></td>
+  <td><input type="radio" name="evaluatedAnswerBooks" value="3"></td>
+  <td><input type="radio" name="evaluatedAnswerBooks" value="4"></td>
+  <td><input type="radio" name="evaluatedAnswerBooks" value="5"></td>
+</tr>
+<tr>
+  <td>Makes sure that he/she is being understood</td>
+  <td><input type="radio" name="beingUnderstood" value="1"></td>
+  <td><input type="radio" name="beingUnderstood" value="2"></td>
+  <td><input type="radio" name="beingUnderstood" value="3"></td>
+  <td><input type="radio" name="beingUnderstood" value="4"></td>
+  <td><input type="radio" name="beingUnderstood" value="5"></td>
+</tr>
+<tr>
+  <td><b>Sub Total (C)</b></td>
+  <td colspan="5"><div id="subTotalC">-</div></td>
+</tr>
+  <tr>
+  <td>Helping approach towards varied academic interests of students</td>
+  <td><input type="radio" name="academicInterests" value="1"></td>
+  <td><input type="radio" name="academicInterests" value="2"></td>
+  <td><input type="radio" name="academicInterests" value="3"></td>
+  <td><input type="radio" name="academicInterests" value="4"></td>
+  <td><input type="radio" name="academicInterests" value="5"></td>
+</tr>
+<tr>
+  <td>Helps student in providing study material which is not readily available in the text books say through e-resources, e-journals, reference books, open course wares etc.</td>
+  <td><input type="radio" name="studyMaterial" value="1"></td>
+  <td><input type="radio" name="studyMaterial" value="2"></td>
+  <td><input type="radio" name="studyMaterial" value="3"></td>
+  <td><input type="radio" name="studyMaterial" value="4"></td>
+  <td><input type="radio" name="studyMaterial" value="5"></td>
+</tr>
+<tr>
+  <td>Helps students irrespective of ethnicity and culture/background</td>
+  <td><input type="radio" name="ethnicity" value="1"></td>
+  <td><input type="radio" name="ethnicity" value="2"></td>
+  <td><input type="radio" name="ethnicity" value="3"></td>
+  <td><input type="radio" name="ethnicity" value="4"></td>
+  <td><input type="radio" name="ethnicity" value="5"></td>
+</tr>
+<tr>
+  <td>Helps students irrespective of gender</td>
+  <td><input type="radio" name="gender" value="1"></td>
+  <td><input type="radio" name="gender" value="2"></td>
+  <td><input type="radio" name="gender" value="3"></td>
+  <td><input type="radio" name="gender" value="4"></td>
+  <td><input type="radio" name="gender" value="5"></td>
+</tr>
+<tr>
+  <td>Helps students facing physical, emotional and learning challenges</td>
+  <td><input type="radio" name="challenges" value="1"></td>
+  <td><input type="radio" name="challenges" value="2"></td>
+  <td><input type="radio" name="challenges" value="3"></td>
+  <td><input type="radio" name="challenges" value="4"></td>
+  <td><input type="radio" name="challenges" value="5"></td>
+</tr>
+<tr>
+  <td>Approach towards developing professional skills among students</td>
+  <td><input type="radio" name="professionalSkills" value="1"></td>
+  <td><input type="radio" name="professionalSkills" value="2"></td>
+  <td><input type="radio" name="professionalSkills" value="3"></td>
+  <td><input type="radio" name="professionalSkills" value="4"></td>
+  <td><input type="radio" name="professionalSkills" value="5"></td>
+</tr>
+<tr>
+  <td>Helps students in realizing career goals</td>
+  <td><input type="radio" name="careerGoals" value="1"></td>
+  <td><input type="radio" name="careerGoals" value="2"></td>
+  <td><input type="radio" name="careerGoals" value="3"></td>
+  <td><input type="radio" name="careerGoals" value="4"></td>
+  <td><input type="radio" name="careerGoals" value="5"></td>
+</tr>
+<tr>
+  <td>Helps students in realizing their strengths and developmental needs</td>
+  <td><input type="radio" name="strengths" value="1"></td>
+  <td><input type="radio" name="strengths" value="2"></td>
+  <td><input type="radio" name="strengths" value="3"></td>
+  <td><input type="radio" name="strengths" value="4"></td>
+  <td><input type="radio" name="strengths" value="5"></td>
+</tr>
+<tr>
+  <td><b>Sub Total (D)</b></td>
+  <td colspan="5"><div id="subTotalD">-</div></td>
+</tr>
+
+  <tr>
+  <td>Control mechanism in effectively conducting the class</td>
+  <td><input type="radio" name="controlMechanism" value="1"></td>
+  <td><input type="radio" name="controlMechanism" value="2"></td>
+  <td><input type="radio" name="controlMechanism" value="3"></td>
+  <td><input type="radio" name="controlMechanism" value="4"></td>
+  <td><input type="radio" name="controlMechanism" value="5"></td>
+</tr>
+<tr>
+  <td>Students’ participation in the class</td>
+  <td><input type="radio" name="studentParticipation" value="1"></td>
+  <td><input type="radio" name="studentParticipation" value="2"></td>
+  <td><input type="radio" name="studentParticipation" value="3"></td>
+  <td><input type="radio" name="studentParticipation" value="4"></td>
+  <td><input type="radio" name="studentParticipation" value="5"></td>
+</tr>
+<tr>
+  <td>Skills of addressing inappropriate behaviour of student</td>
+  <td><input type="radio" name="behaviorSkills" value="1"></td>
+  <td><input type="radio" name="behaviorSkills" value="2"></td>
+  <td><input type="radio" name="behaviorSkills" value="3"></td>
+  <td><input type="radio" name="behaviorSkills" value="4"></td>
+  <td><input type="radio" name="behaviorSkills" value="5"></td>
+</tr>
+<tr>
+  <td>Tendency of inviting opinion and question on subject matter from students</td>
+  <td><input type="radio" name="opinionTendency" value="1"></td>
+  <td><input type="radio" name="opinionTendency" value="2"></td>
+  <td><input type="radio" name="opinionTendency" value="3"></td>
+  <td><input type="radio" name="opinionTendency" value="4"></td>
+  <td><input type="radio" name="opinionTendency" value="5"></td>
+</tr>
+<tr>
+  <td>Enhances learning by judicious reinforcement mechanism</td>
+  <td><input type="radio" name="reinforcementMechanism" value="1"></td>
+  <td><input type="radio" name="reinforcementMechanism" value="2"></td>
+  <td><input type="radio" name="reinforcementMechanism" value="3"></td>
+  <td><input type="radio" name="reinforcementMechanism" value="4"></td>
+  <td><input type="radio" name="reinforcementMechanism" value="5"></td>
+</tr>
+<tr>
+  <td>Inspires students for ethical conduct</td>
+  <td><input type="radio" name="ethicalConduct" value="1"></td>
+  <td><input type="radio" name="ethicalConduct" value="2"></td>
+  <td><input type="radio" name="ethicalConduct" value="3"></td>
+  <td><input type="radio" name="ethicalConduct" value="4"></td>
+  <td><input type="radio" name="ethicalConduct" value="5"></td>
+</tr>
+<tr>
+  <td>Acts as a role model</td>
+  <td><input type="radio" name="roleModel" value="1"></td>
+  <td><input type="radio" name="roleModel" value="2"></td>
+  <td><input type="radio" name="roleModel" value="3"></td>
+  <td><input type="radio" name="roleModel" value="4"></td>
+  <td><input type="radio" name="roleModel" value="5"></td>
+</tr>
+<tr>
+  <td><b>Sub Total (E)</b></td>
+  <td colspan="5"><div id="subTotalE">-</div></td>
+</tr>
+  </tbody>
+</table>
+  <label for="additionalRemarks">Additional Remarks (If any):</label><br>
+<textarea id="additionalRemarks" name="additionalRemarks" rows="5" cols="50"></textarea>
+
+<button onclick="calculateSubTotalA()">Calculate Sub Total (A)</button>
+<button onclick="calculateSubTotalB()">Calculate Sub Total (B)</button>
+<button onclick="calculateSubTotalC()">Calculate Sub Total (C)</button>
+<button onclick="calculateSubTotalD()">Calculate Sub Total (D)</button>
+<button onclick="calculateSubTotalE()">Calculate Sub Total (E)</button>
+<br>
+<button onclick="calculateSum()">Calculate Total Rating</button>
+<div id="total"></div>
+  <button type="submit">Submit</button>
+
+<script>
+  function calculateSum() {
+    let total = 0;
+    const radios = document.querySelectorAll('input[type="radio"]:checked');
+    radios.forEach(radio => {
+      total += parseInt(radio.value);
+    });
+    document.getElementById('total').textContent = "Total Rating: " + total;
+  }
+
+  function calculateSubTotalA() {
+    let subTotalA = 0;
+    const criteriaA = ['punctuality', 'regularity', 'attendance', 'syllabus', 'organization', 'arrangement'];
+    criteriaA.forEach(criterion => {
+      const rating = document.querySelector('input[name="' + criterion + '"]:checked');
+      if (rating) {
+        subTotalA += parseInt(rating.value);
+      }
+    });
+    document.getElementById('subTotalA').textContent = subTotalA;
+  }
+
+  function calculateSubTotalB() {
+    let subTotalB = 0;
+    const criteriaB = ['focusSyllabi', 'selfConfidence', 'communicationSkills', 'classroomDiscussions', 'teachingSubjectMatter', 'structuredLecture', 'linkingSubject', 'latestDevelopments'];
+    criteriaB.forEach(criterion => {
+      const rating = document.querySelector('input[name="' + criterion + '"]:checked');
+      if (rating) {
+        subTotalB += parseInt(rating.value);
+      }
+    });
+    document.getElementById('subTotalB').textContent = subTotalB;
+  }
+
+  function calculateSubTotalC() {
+    let subTotalC = 0;
+    const criteriaC = ['teachingAids', 'whiteboardWork', 'innovativeTeaching', 'sharesAnswers', 'evaluatedAnswerBooks', 'beingUnderstood'];
+    criteriaC.forEach(criterion => {
+      const rating = document.querySelector('input[name="' + criterion + '"]:checked');
+      if (rating) {
+        subTotalC += parseInt(rating.value);
+      }
+    });
+    document.getElementById('subTotalC').textContent = subTotalC;
+  }
+
+  function calculateSubTotalD() {
+    let subTotalD = 0;
+    const criteriaD = ['academicInterests', 'studyMaterial', 'ethnicity', 'gender', 'challenges', 'professionalSkills', 'careerGoals', 'strengths'];
+    criteriaD.forEach(criterion => {
+      const rating = document.querySelector('input[name="' + criterion + '"]:checked');
+      if (rating) {
+        subTotalD += parseInt(rating.value);
+      }
+    });
+    document.getElementById('subTotalD').textContent = subTotalD;
+  }
+
+  function calculateSubTotalE() {
+    let subTotalE = 0;
+    const criteriaE = ['controlMechanism', 'studentParticipation', 'behaviorSkills', 'opinionTendency', 'reinforcementMechanism', 'ethicalConduct', 'roleModel'];
+    criteriaE.forEach(criterion => {
+      const rating = document.querySelector('input[name="' + criterion + '"]:checked');
+      if (rating) {
+        subTotalE += parseInt(rating.value);
+      }
+    });
+    document.getElementById('subTotalE').textContent = subTotalE;
+  }
+</script>
+</body>
+</html>

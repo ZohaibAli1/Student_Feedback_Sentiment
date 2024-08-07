@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Analysis Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Feedback Analysis Results</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for sentiment in ['Good', 'Bad', 'Neutral'] %}
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">{{ sentiment }} Feedback</h3>
+                </div>
+                <div class="border-t border-gray-200">
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Top Words</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {% for word, count in results[sentiment]['top_words'] %}
+                                    {{ word }} ({{ count }})<br>
+                                {% endfor %}
+                            </dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Examples</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {% for example in results[sentiment]['examples'] %}
+                                    <p><strong>Best Features:</strong> {{ example['BestFeatures'] }}</p>
+                                    <p><strong>Improvement Areas:</strong> {{ example['ImprovementAreas'] }}</p>
+                                    <hr class="my-2">
+                                {% endfor %}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Sentiment Distribution</h3>
+            </div>
+            <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+                <dl class="sm:divide-y sm:divide-gray-200">
+                    {% for sentiment, count in distribution.items() %}
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">{{ sentiment }}</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ count }}</dd>
+                    </div>
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Sentiment Distribution Chart</h3>
+            </div>
+            <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+                <img src="data:image/png;base64,{{ plot_url }}" alt="Sentiment Distribution Chart" class="mx-auto">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Distribution by Course ID</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .plot-container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Overall Feedback Distribution</h1>
+
+        <!-- Filter form -->
+        <form class="filter-form" method="POST" action="/view_data">
+            <label for="course_id">Select Course ID:</label>
+            <select id="course_id" name="course_id">
+                <option value="">All</option>
+                <!-- Populate options with course IDs -->
+                {% for course_id in course_ids %}
+                    <option value="{{ course_id }}">{{ course_id }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Filter</button>
+        </form>
+
+        <!-- Plots container -->
+        {% for plot in plots %}
+            <div class="plot-container">
+                {{ plot | safe }}
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

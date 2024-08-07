@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Distribution by Course ID</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .feedback-chart {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Feedback Distribution by Course ID</h1>
+
+        <!-- Feedback details for each course -->
+        {% for course_feedback in course_feedbacks %}
+        <div class="feedback-container">
+            <h2>{{ course_feedback.course_name }}</h2>
+            <!-- Bar chart for mean scores -->
+            <div id="chart_{{ loop.index }}" class="feedback-chart"></div>
+            <script>
+                var categories = [];
+                var scores = [];
+                {% for feedback_entry in course_feedback.feedback %}
+                    categories.push("{{ feedback_entry.category }}");
+                    scores.push({{ feedback_entry.mean_score }});
+                {% endfor %}
+                var data = [{
+                    x: categories,
+                    y: scores,
+                    type: 'bar'
+                }];
+                var layout = {
+                    title: 'Mean Scores for Feedback Categories',
+                    xaxis: {
+                        title: 'Feedback Category'
+                    },
+                    yaxis: {
+                        title: 'Mean Score'
+                    }
+                };
+                Plotly.newPlot('chart_{{ loop.index }}', data, layout);
+            </script>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submitted Feedback</title>
+</head>
+
+<body>
+    <h1>Feedback Submitted Successfully</h1>
+
+    <h2>Course Information</h2>
+    <p>Course ID: {{ course_id }}</p>
+
+    <h2>Teacher Details</h2>
+    <p>Username: {{ teacher_details['username'] }}</p>
+    <p>Course Name: {{ teacher_details['course_name'] }}</p>
+
+    <!-- Add other teacher details as needed -->
+
+    <h2>Feedback Data</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Total A</td>
+                <td>{{ total_A }}</td>
+            </tr>
+            <tr>
+                <td>Total B</td>
+                <td>{{ total_B }}</td>
+            </tr>
+            <tr>
+                <td>Total C</td>
+                <td>{{ total_C }}</td>
+            </tr>
+            <tr>
+                <td>Total D</td>
+                <td>{{ total_D }}</td>
+            </tr>
+            <tr>
+                <td>Total E</td>
+                <td>{{ total_E }}</td>
+            </tr>
+            <tr>
+                <td colspan="6">Total (A+B+C+D+E) {{ overall_total }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Add other feedback categories as needed -->
+
+    <p>Timestamp: {{ timestamp }}</p>
+
+    <p>Thank you for your feedback!</p>
+</body>
+
+</html>

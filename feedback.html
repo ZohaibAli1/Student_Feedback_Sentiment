@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5 mb-4 text-center">Feedback Form</h1>
+
+        <form id="courseSelectionForm">
+    <div class="form-group">
+        <label for="courseSelect">Select Course:</label>
+        <select id="courseSelect" class="form-control">
+            <option value="" selected disabled>Select Course</option>
+            {% for course_id, course_details in course_data.items() %}
+                <option value="{{ course_id }}">{{ course_details['username'] }} - {{ course_details['course_name'] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+        <button type="button" class="btn btn-primary" onclick="selectCourse()">Continue</button>
+    </form>
+
+    <form id="feedbackForm" action="/submit_feedback" method="post" class="feedback-form" style="display: none;">
+        <input type="hidden" id="course_id" name="course_id">
+
+
+                <div class="form-group">
+        <label>The learning outcomes & course objectives were clear:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningOutcomes" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningOutcomes" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningOutcomes" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningOutcomes" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningOutcomes" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>The Course workload was manageable:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="workloadManageable" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="workloadManageable" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="workloadManageable" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="workloadManageable" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="workloadManageable" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>The Course was well organized (e.g. timely access to materials, notification of changes, etc.):</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="wellOrganized" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="wellOrganized" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="wellOrganized" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="wellOrganized" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="wellOrganized" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+
+
+
+                                    <h2>About Your Activity</h2>
+
+                    <div class="form-group">
+        <label>You participated actively in the Course:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentParticipation" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentParticipation" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentParticipation" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentParticipation" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentParticipation" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>You think you have made progress in this Course:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentProgress" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentProgress" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentProgress" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentProgress" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentProgress" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Approximate level of your own attendance during the whole Course:</label>
+        <!-- Radio buttons for studentAttendance -->
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentAttendance" value="<25%">
+            <label class="form-check-label">&lt;25%</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentAttendance" value="26% - 50%">
+            <label class="form-check-label">26% - 50%</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentAttendance" value="51% - 75%">
+            <label class="form-check-label">51% - 75%</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="studentAttendance" value=">75%">
+            <label class="form-check-label">&gt;75%</label>
+        </div>
+
+
+    </div>
+
+        <h2>Learning Environment and Teaching Methods</h2>
+        <div class="form-group">
+            <label>You think the Course was well structured to achieve the learning outcomes (there was a good balance of lectures, tutorials, practical, etc.):</label>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="wellStructured" value="2" required>
+                <label class="form-check-label">Strongly Agree (SA)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="wellStructured" value="1">
+                <label class="form-check-label">Agree (AG)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="wellStructured" value="0">
+                <label class="form-check-label">Undecided (UC)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="wellStructured" value="-1">
+                <label class="form-check-label">Disagree (DA)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="wellStructured" value="-2">
+                <label class="form-check-label">Strongly Disagree (SD)</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>The learning and teaching methods encouraged your participation:</label>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="encouragedParticipation" value="2" required>
+                <label class="form-check-label">Strongly Agree (SA)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="encouragedParticipation" value="1">
+                <label class="form-check-label">Agree (AG)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="encouragedParticipation" value="0">
+                <label class="form-check-label">Undecided (UC)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="encouragedParticipation" value="-1">
+                <label class="form-check-label">Disagree (DA)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="encouragedParticipation" value="-2">
+                <label class="form-check-label">Strongly Disagree (SD)</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>The overall environment in the class was conducive to learning:</label>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="conduciveToLearning" value="2" required>
+                <label class="form-check-label">Strongly Agree (SA)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="conduciveToLearning" value="1">
+                <label class="form-check-label">Agree (AG)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="conduciveToLearning" value="0">
+                <label class="form-check-label">Undecided (UC)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="conduciveToLearning" value="-1">
+                <label class="form-check-label">Disagree (DA)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="conduciveToLearning" value="-2">
+                <label class="form-check-label">Strongly Disagree (SD)</label>
+            </div>
+        </div>
+
+
+    <div class="form-group">
+        <label>Classrooms were satisfactory:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="satisfactoryClassrooms" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="satisfactoryClassrooms" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="satisfactoryClassrooms" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="satisfactoryClassrooms" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="satisfactoryClassrooms" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+                        <h2>LEARNING RESOURCES</h2>
+
+            <div class="form-group">
+        <label>Learning materials (Lesson Plans, Course Notes, and Handouts etc.) were relevant and useful:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningMaterials" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningMaterials" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningMaterials" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningMaterials" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="learningMaterials" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Recommended reading Books etc. were relevant and appropriate:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="recommendedReading" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="recommendedReading" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="recommendedReading" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="recommendedReading" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="recommendedReading" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>The provision of learning resources in the library was adequate and appropriate:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="libraryResources" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="libraryResources" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="libraryResources" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="libraryResources" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="libraryResources" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+        <div class="form-group">
+            <label>The provision of online learning resources was adequate and appropriate:</label>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="onlineResources" value="2" required>
+                <label class="form-check-label">Strongly Agree (SA)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="onlineResources" value="1">
+                <label class="form-check-label">Agree (AG)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="onlineResources" value="0">
+                <label class="form-check-label">Undecided (UC)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="onlineResources" value="-1">
+                <label class="form-check-label">Disagree (DA)</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="onlineResources" value="-2">
+                <label class="form-check-label">Strongly Disagree (SD)</label>
+            </div>
+        </div>
+
+        <h2>  Quality OF Delivery </h2>
+
+            <div class="form-group">
+        <label>The Course stimulated your interest and thought on the subject area:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="interestStimulated" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="interestStimulated" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="interestStimulated" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="interestStimulated" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="interestStimulated" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>The pace of the Course was appropriate:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="coursePace" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="coursePace" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="coursePace" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="coursePace" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="coursePace" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Ideas and concepts were presented clearly:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="clearPresentation" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="clearPresentation" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="clearPresentation" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="clearPresentation" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="clearPresentation" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+        <h2>Assessments</h2>
+            <div class="form-group">
+        <label>The method of assessment was reasonable:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="assessmentReasonable" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="assessmentReasonable" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="assessmentReasonable" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="assessmentReasonable" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="assessmentReasonable" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Feedback on assessment was timely:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackTimely" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackTimely" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackTimely" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackTimely" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackTimely" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Feedback on assessment was helpful:</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackHelpful" value="2" required>
+            <label class="form-check-label">Strongly Agree (SA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackHelpful" value="1">
+            <label class="form-check-label">Agree (AG)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackHelpful" value="0">
+            <label class="form-check-label">Undecided (UC)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackHelpful" value="-1">
+            <label class="form-check-label">Disagree (DA)</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="feedbackHelpful" value="-2">
+            <label class="form-check-label">Strongly Disagree (SD)</label>
+        </div>
+    </div>
+
+     <div class="form-group">
+        <label for="bestFeatures">Please specify the best features of the Course:</label>
+        <textarea class="form-control" id="bestFeatures" name="bestFeatures" rows="3"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="improvementAreas">The Course could have been improved by:</label>
+        <textarea class="form-control" id="improvementAreas" name="improvementAreas" rows="3"></textarea>
+    </div>
+            <div>
+                <button type="submit_feedback" class="btn btn-primary">Submit Feedback</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function selectCourse() {
+            var selectedCourseId = document.getElementById("courseSelect").value;
+
+            if (selectedCourseId) {
+                // Display feedback form
+                document.getElementById("course_id").value = selectedCourseId;
+                document.getElementById("courseSelectionForm").style.display = "none";
+                document.getElementById("feedbackForm").style.display = "block";
+            }
+        }
+    </script>
+
+</body>
+</html>

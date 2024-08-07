@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Source+Code+Pro:wght@300&display=swap" rel="stylesheet">
+    <style>
+        .std-form {
+            max-width: 500px;
+            margin: auto;
+        }
+        .bg-grey {
+            background-color: #f2f2f2;
+        }
+        .border-rounded {
+            border-radius: 10px;
+        }
+        .feedback-btn {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body class="bg-grey">
+    <div class="container">
+        <h1 class="mt-5 mb-4 text-center">Welcome to the Student Dashboard!</h1>
+        <div>
+            {% for course in courses %}
+            <div class="text-center py-3 mb-4 bg-white border-rounded">
+                <h3>Course ID: {{ course['course_id'] }}</h3>
+                <p>Course Name: {{ course['course_name'] }}</p>
+                <p>Teacher Name: {{ course['username'] }}</p>
+               <a href="{{ url_for('feedback', course_id=course['course_id']) }}" class="btn btn-primary feedback-btn">Feedback Available</a>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+        </div>
+    </div>
+    <div class="logout-form">
+            <form action="{{ url_for('logout') }}" method="post">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+</body>
+</html>

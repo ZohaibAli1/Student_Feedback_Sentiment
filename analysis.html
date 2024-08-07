@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Performance Analysis Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1, h2 {
+            color: #007BFF;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        ol {
+            margin-top: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 20px auto;
+        }
+
+        p, th, td {
+            color: #333;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Course Performance Analysis Results</h1>
+
+        <h2>Model Performance</h2>
+        <p>Mean Squared Error: {{ mse|round(4) }}</p>
+        <p>R-squared Score: {{ r2|round(4) }}</p>
+
+        <h2>Top 5 Courses by Predicted Performance</h2>
+        <table>
+            <tr>
+                <th>Course ID</th>
+                <th>Current Score</th>
+                <th>Predicted Score</th>
+                <th>Improvement</th>
+                <th>Improvement Percentage</th>
+            </tr>
+            {% for _, course in top_courses.iterrows() %}
+            <tr>
+                <td>{{ course['Course ID'] }}</td>
+                <td>{{ course['overall_score']|round(2) }}</td>
+                <td>{{ course['predicted_score']|round(2) }}</td>
+                <td>{{ course['improvement']|round(2) }}</td>
+                <td>{{ course['improvement_percentage']|round(2) }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Average Improvement</h2>
+        <p>{{ avg_improvement|round(2) }} points ({{ avg_improvement_percentage|round(2) }}%)</p>
+
+        <h2>Courses with Significant Improvement (>5%)</h2>
+        <table>
+            <tr>
+                <th>Course ID</th>
+                <th>Current Score</th>
+                <th>Predicted Score</th>
+                <th>Improvement Percentage</th>
+            </tr>
+            {% for _, course in courses_with_significant_improvement.iterrows() %}
+            <tr>
+                <td>{{ course['Course ID'] }}</td>
+                <td>{{ course['overall_score']|round(2) }}</td>
+                <td>{{ course['predicted_score']|round(2) }}</td>
+                <td>{{ course['improvement_percentage']|round(2) }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Top 5 Most Important Features</h2>
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>Importance</th>
+            </tr>
+            {% for _, feature in feature_importance.iterrows() %}
+            <tr>
+                <td>{{ feature['feature'] }}</td>
+                <td>{{ feature['importance']|round(4) }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Feature Importance Plot</h2>
+        <img src="data:image/png;base64,{{ feature_importance_plot }}" alt="Feature Importance Plot">
+
+        <h2>Recommendations</h2>
+        <ol>
+            <li>Focus on improving the top features identified in the feature importance analysis.</li>
+            <li>Investigate the practices of courses with significant predicted improvement.</li>
+            <li>For courses predicted to decline, review and address potential issues in key areas.</li>
+            <li>Regularly update the model with new feedback data to maintain accurate predictions.</li>
+            <li>Use the prediction function to monitor individual course performance over time.</li>
+        </ol>
+
+        <a href="/login" class="back-button">Back to Admin Panel</a>
+    </div>
+</body>
+</html>

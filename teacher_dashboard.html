@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <!-- Add any CSS styles here -->
+    <style>
+        /* Add CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .course-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .course-details {
+            margin-left: 20px;
+        }
+        .course-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        .course-link:hover {
+            text-decoration: underline;
+        }
+        /* Logout button */
+        .logout-form {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .logout-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+        .feedback-link {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ session.username }}!</h1>
+        <h2>Your Courses</h2>
+        <ul>
+            {% for course in courses_info %}
+            <li class="course-item">
+                <span class="course-link">Course Name: {{ course['course_name'] }}</span><br>
+                <div class="course-details">
+                    <span>Course ID: {{ course['Course ID'] }}</span>
+                    <div class="feedback">
+                        {% if course['feedback'] %}
+                            <strong>Feedback:</strong>
+                            <ul>
+                                {% for item in course['feedback'] %}
+                                    <li>{{ item }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                        {% endif %}
+                    </div>
+                    <div class="feedback-link">
+                        <a href="{{ url_for('teacher_view_data', course_id=course['Course ID']) }}">View Feedback</a>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <!-- Logout button -->
+        <div class="logout-form">
+            <form action="{{ url_for('logout') }}" method="post">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

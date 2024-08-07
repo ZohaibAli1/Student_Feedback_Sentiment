@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Scores</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        img {
+            display: block;
+            margin: 0 auto;
+            margin-top: 20px;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sentiment Scores for Feedback Questions</h1>
+
+        <div>
+            <img src="data:image/png;base64,{{ encoded_image }}" alt="Sentiment Scores">
+        </div>
+
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Very Negative</th>
+                        <th>Negative</th>
+                        <th>Neutral</th>
+                        <th>Positive</th>
+                        <th>Very Positive</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for question, scores in sentiment_scores %}
+                    <tr>
+                        <td>{{ question }}</td>
+                        <td>{{ scores['-2'] }}</td>
+                        <td>{{ scores['-1'] }}</td>
+                        <td>{{ scores['0'] }}</td>
+                        <td>{{ scores['1'] }}</td>
+                        <td>{{ scores['2'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="logout-form">
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+</body>
+</html>
