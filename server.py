@@ -1,8 +1,18 @@
-
+import seaborn as sns
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor
+from summary_train import summarize_feedback
+from wordcloud import WordCloud
 import plotly.express as px
 import os
+from io import BytesIO
+import base64
+from sentence_transformers import SentenceTransformer
+embedder = SentenceTransformer('distilbert-base-nli-mean-tokens')
 import matplotlib
-from flask import Flask, request, render_template, session, redirect, url_for, flash
+from flask import Flask, request, render_template, session, redirect, url_for, flash,send_file
 from Student_csv import  update_enrollment_status, read_courses_from_csv, students_courses_file, Student, add_student_to_csv, update_student_in_csv, delete_student_from_csv,csv_filename_students
 import csv
 from course_csv import add_course_to_csv, update_course_in_csv, delete_course_from_csv, csv_filename_courses
@@ -11,15 +21,31 @@ from subjects_csv import add_subject_to_csv, update_subject_in_csv, delete_subje
 from faculty_csv import Admin,Teacher, add_faculty_to_csv, update_faculty_in_csv, delete_faculty_from_csv,csv_filename_faculty
 from datetime import datetime
 from flask import jsonify
+import matplotlib.pyplot as plt
 from feedback_file import course_data, csv_filename_feedback_records
 from teacher_evaluation import get_teacher_details, check_attendance,write_to_csv
 import re
+from clusters_train import analyze_feedback
 from textblob import TextBlob
 import nltk
+from nltk.tokenize import sent_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
+from sklearn.cluster import KMeans
+import torch
+import io
+from transformers import pipeline
+from collections import Counter
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.linear_model import LinearRegression
+from test import load_data,load_assignment_records,calculate_scores,analyze_courses
+
+
+
 matplotlib.use('Agg')  # Set the backend to Agg
 
 
@@ -33,6 +59,10 @@ app.secret_key = os.urandom(12)
 
 stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
+
+model_name = "t5-base"
+model_revision = "main"
+summarizer = pipeline("summarization", model=model_name, revision=model_revision)
 
 def check_csv_exists(filename):
     return os.path.exists(filename)
@@ -73,7 +103,186 @@ def index():
             'Assessment Reasonable', 'Feedback Timely', 'Feedback Helpful'
         ]
 
-    return render_template('admin.html', courses=available_courses, teachers=teachers,aspects=aspects)
+    return render_template('admin.html', courses=available_courses, teachers=teachers, aspects=aspects)
+
+
+
+@app.route('/clusters')
+def clusters():
+    results, distribution, plot_url = analyze_feedback()
+    return render_template('clusters.html', results=results, distribution=distribution, plot_url=plot_url)
+
+@app.route('/comments_feedback')
+def comments_feedback():
+    feedback_data = load_data('feedback_data.csv')
+    assignment_records = load_assignment_records('assignment_records.csv')
+    scores = calculate_scores(feedback_data)
+    results = analyze_courses(scores, assignment_records)
+    return render_template('comments_feedback.html', **results)
+
+
+@app.route('/api/analyze')
+def api_analyze():
+    feedback_data = load_data('feedback_data.csv')
+    assignment_records = load_assignment_records('assignment_records.csv')
+    scores = calculate_scores(feedback_data)
+    results = analyze_courses(scores, assignment_records)
+    return jsonify(results)
+
+
+
+
+# Global variables to store model and data
+model = None
+course_DATA = None
+feature_importance = None
+
+
+def load_and_prepare_data():
+    global model, course_DATA, feature_importance, features
+
+    # Load the data
+    df = pd.read_csv('feedback_data.csv')
+    df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+
+    features = ['Learning Outcomes', 'Workload Manageable', 'Well Organized', 'Student Participation',
+                'Student Progress', 'Well Structured', 'Encouraged Participation', 'Conducive to Learning',
+                'Learning Materials', 'Recommended Reading', 'Library Resources', 'Online Resources',
+                'Interest Stimulated', 'Course Pace', 'Clear Presentation', 'Assessment Reasonable',
+                'Feedback Timely', 'Feedback Helpful']
+
+    # Aggregate data by Course ID
+    course_DATA = df.groupby('Course ID')[features].mean().reset_index()
+    course_DATA['overall_score'] = course_DATA[features].mean(axis=1)
+
+    X = course_DATA[features]
+    y = course_DATA['overall_score']
+
+    # Create and train the model
+    pipeline = Pipeline([
+        ('imputer', SimpleImputer(strategy='mean')),
+        ('scaler', StandardScaler()),
+        ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
+    ])
+    pipeline.fit(X, y)
+
+    # Calculate feature importance
+    feature_importance = pd.DataFrame({
+        'feature': features,
+        'importance': pipeline.named_steps['regressor'].feature_importances_
+    }).sort_values('importance', ascending=False)
+
+    # Predict future performance for all courses
+    course_DATA['predicted_score'] = pipeline.predict(course_DATA[features])
+    course_DATA['improvement'] = course_DATA['predicted_score'] - course_DATA['overall_score']
+    course_DATA['improvement_percentage'] = (course_DATA['improvement'] / course_DATA['overall_score']) * 100
+
+    model = pipeline
+
+
+
+@app.route('/analyze', methods=['GET'])
+def analyze():
+    global model, course_DATA, feature_importance, features
+
+    # Model performance
+    y_pred = model.predict(course_DATA[features])
+    mse = mean_squared_error(course_DATA['overall_score'], y_pred)
+    r2 = r2_score(course_DATA['overall_score'], y_pred)
+
+    # Top courses
+    top_courses = course_DATA.sort_values('predicted_score', ascending=False).head()
+
+    # Average improvement
+    avg_improvement = course_DATA['improvement'].mean()
+    avg_improvement_percentage = course_DATA['improvement_percentage'].mean()
+
+    # Courses with significant improvement
+    significant_improvement_threshold = 1
+    courses_with_significant_improvement = course_DATA[
+        course_DATA['improvement_percentage'] > significant_improvement_threshold]
+
+    # Feature importance plot
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='importance', y='feature', data=feature_importance.head(10))
+    plt.title('Top 10 Most Important Features')
+    plt.tight_layout()
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    feature_importance_plot = base64.b64encode(img.getvalue()).decode()
+
+    return render_template('analysis.html',
+                           mse=mse,
+                           r2=r2,
+                           top_courses=top_courses,
+                           avg_improvement=avg_improvement,
+                           avg_improvement_percentage=avg_improvement_percentage,
+                           courses_with_significant_improvement=courses_with_significant_improvement,
+                           feature_importance=feature_importance.head(),
+                           feature_importance_plot=feature_importance_plot)
+
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    global course_DATA, features
+
+    course_DATA = int(request.form['course_id'])
+    course_data_specific = course_DATA[course_DATA['Course ID'] == course_DATA]
+
+    if course_data_specific.empty:
+        return jsonify({"error": "Course ID not found"})
+
+    current_score = course_data_specific['overall_score'].values[0]
+    predicted_score = course_data_specific['predicted_score'].values[0]
+    improvement = course_data_specific['improvement'].values[0]
+    improvement_percentage = course_data_specific['improvement_percentage'].values[0]
+
+    return jsonify({
+        "course_id": course_DATA,
+        "current_score": round(current_score, 2),
+        "predicted_score": round(predicted_score, 2),
+        "improvement": round(improvement, 2),
+        "improvement_percentage": round(improvement_percentage, 2)
+    })
+
+@app.route('/summary')
+def generate_summary():
+    df = pd.read_csv('feedback_data.csv')
+    results = summarize_feedback(df)
+    return render_template('summary.html', results=results)
+
+@app.context_processor
+def utility_processor():
+    return dict(enumerate=enumerate)
+
+
+@app.route('/generate_wordcloud')
+def generate_wordcloud():
+    # Read data from CSV files
+    df_feedback = pd.read_csv('feedback_data.csv', usecols=['BestFeatures', 'ImprovementAreas'])#specific column
+    df_evaluations = pd.read_csv('teacher_evaluations.csv', usecols=['additionalRemarks'])#specific column
+
+    # Extract text columns
+    feedback_text = df_feedback.dropna().values.flatten()
+    evaluations_text = df_evaluations.dropna().values.flatten()
+    all_text = pd.concat([pd.Series(feedback_text), pd.Series(evaluations_text)])
+
+    # Tokenize
+    sentences = sent_tokenize(' '.join(all_text))
+    count = sum(1 for sentence in sentences if len(sentence.split()) <= 20)
+
+    # Generate word cloud
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(' '.join(all_text))
+
+    # Convert word cloud to image and encode
+    image_stream = BytesIO()
+    wordcloud.to_image().save(image_stream, format='PNG')
+    image_stream.seek(0)
+    encoded_image = base64.b64encode(image_stream.getvalue()).decode('utf-8')
+
+    return render_template('generate_wordcloud.html', encoded_image=encoded_image, sentence_count=count)
+
 
 
 @app.route('/sentiment_scores')
@@ -176,14 +385,13 @@ def view_sentiment_scores():
     return render_template('sentiment_scores.html', scores=scores_df)
 
 
-
-
-@app.route('/view_data')
+@app.route('/view_data', methods=['GET', 'POST'])
 def view_data():
     df_feedback = pd.read_csv('feedback_data.csv')
     df_users_courses = pd.read_csv('assignment_records.csv')
     df_merged = pd.merge(df_feedback, df_users_courses, on='Course ID')
     df_merged = df_merged.drop_duplicates(subset='Course ID')
+    course_ids = df_merged['Course ID'].unique().tolist()
 
     columns_of_interest = ['Learning Outcomes', 'Workload Manageable', 'Well Organized',
                            'Student Participation', 'Student Progress',
@@ -193,6 +401,11 @@ def view_data():
                            'Assessment Reasonable', 'Feedback Timely', 'Feedback Helpful']
 
     df_merged[columns_of_interest] = df_merged[columns_of_interest].apply(pd.to_numeric, errors='coerce')
+
+    # Filter data based on selected course ID
+    selected_course_id = request.form.get('course_id')
+    if selected_course_id:
+        df_merged = df_merged[df_merged['Course ID'] == int(selected_course_id)]
 
     course_info = df_merged.groupby('Course ID').agg({'username': lambda x: '<br>'.join(x),
                                                       'course_name': lambda x: '<br>'.join(x)})
@@ -217,7 +430,57 @@ def view_data():
 
         plots.append(fig.to_html(full_html=False))
 
-    return render_template('view_data.html', plots=plots)
+    return render_template('view_data.html', plots=plots,course_ids=course_ids)
+
+
+
+
+@app.route('/scores')
+def view_scores():
+    df_feedback = pd.read_csv('feedback_data.csv')
+
+    feedback_questions = ['Learning Outcomes', 'Workload Manageable', 'Well Organized',
+                          'Student Participation', 'Student Progress',
+                          'Well Structured', 'Encouraged Participation', 'Conducive to Learning',
+                          'Learning Materials', 'Recommended Reading', 'Library Resources', 'Online Resources',
+                          'Interest Stimulated', 'Course Pace', 'Clear Presentation',
+                          'Assessment Reasonable', 'Feedback Timely', 'Feedback Helpful']
+
+    sentiment_scores = {question: {'-2': 0, '-1': 0, '0': 0, '1': 0, '2': 0} for question in feedback_questions}
+
+    for question in feedback_questions:
+        for sentiment in df_feedback[question]:
+            sentiment_scores[question][str(sentiment)] += 1
+
+    # Plotting
+    plt.figure(figsize=(10, 8))
+    for question in feedback_questions:
+        colors = ['darkred', 'red', 'gray', 'green', 'darkgreen']
+        bar_positions = [0, sentiment_scores[question]['-2'],
+                         sentiment_scores[question]['-2'] + sentiment_scores[question]['-1'],
+                         sentiment_scores[question]['-2'] + sentiment_scores[question]['-1'] + sentiment_scores[question]['0'],
+                         sentiment_scores[question]['-2'] + sentiment_scores[question]['-1'] + sentiment_scores[question]['0'] + sentiment_scores[question]['1']]
+        for i, category in enumerate(['-2', '-1', '0', '1', '2']):
+            plt.barh(question, sentiment_scores[question][category], left=bar_positions[i], color=colors[i])
+
+    plt.xlabel('Count')
+    plt.ylabel('Feedback Questions')
+    plt.title('Sentiment Scores for Feedback Questions')
+    plt.legend(['Very Negative', 'Negative', 'Neutral', 'Positive', 'Very Positive'], loc='upper right')
+
+    # Convert plot to base64 encoded image
+    image_stream = BytesIO()
+    plt.savefig(image_stream, format='png')
+    image_stream.seek(0)
+    encoded_image = base64.b64encode(image_stream.getvalue()).decode('utf-8')
+
+    # Pass sentiment scores to the template
+    sentiment_scores_list = [(question, scores) for question, scores in sentiment_scores.items()]
+
+    return render_template('view_scores.html', encoded_image=encoded_image, sentiment_scores=sentiment_scores_list)
+
+
+
 
 
 @app.route('/add_student', methods=['POST'])
@@ -715,4 +978,5 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(port=5978, host='0.0.0.0', debug=True)
+    load_and_prepare_data()
+    app.run(debug=True)
